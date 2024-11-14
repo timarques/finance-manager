@@ -249,6 +249,29 @@ impl TransactionPage {
 
             let wallet_id = wallet_data.id;
             let transaction_id = transaction_data.id;
+            let transaction_name_lowercase = transaction_data.name.to_lowercase();
+
+            if wallet_data.transactions.iter().any(|t|
+                t.id != transaction_id &&
+                t.name.to_lowercase() == transaction_name_lowercase &&
+                (
+                    t.start_date == transaction_data.start_date ||
+                    (
+                        t.start_date > transaction_data.start_date &&
+                        t.cycle != Cycle::OneTime &&
+                        transaction_data.cycle != Cycle::OneTime &&
+                        (
+                            Some(t.start_date) <= transaction_data.end_date ||
+                            transaction_data.end_date.is_none()
+                        )
+                    )
+                )
+            ) {
+                return context
+                    .with_ui_action(UiAction::push_notification(
+                        "A transaction with the same name already exists within the specified date range."
+                    )).propagate();
+            }
 
             wallet_data.add_or_update_transaction(transaction_data.clone());
             new_data.add_or_update_wallet(wallet_data);

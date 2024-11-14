@@ -230,11 +230,17 @@ impl WalletPage {
     fn connect_save_event(self: &Rc<Self>) {
         let this = self.clone();
         self.save_button_row.connect_activated(move |_| {
-
             let context = this.state.borrow().context.clone();
             let mut data = context.data().clone();
             let wallet = this.get_data().assign_global_id();
             let wallet_id = wallet.id;
+            let wallet_name_lowercase = wallet.name.to_lowercase();
+            
+            if data.wallets.iter().any(|w| w.id != wallet_id && w.name.to_lowercase() == wallet_name_lowercase) {
+                return context
+                    .with_ui_action(UiAction::push_notification("Wallet name already exists"))
+                    .propagate();
+            }
 
             data.add_or_update_wallet(wallet);
 
