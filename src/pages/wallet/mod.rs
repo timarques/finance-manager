@@ -308,7 +308,11 @@ impl LifeCycle<NavigationAction> for Rc<WalletPage> {
                 .find_wallet_by_id(id)
                 .cloned()
                 .unwrap(),
-            None => Wallet::default(),
+            None => {
+                let mut w = Wallet::default();
+                w.currency = context.data().currency;
+                w
+            },
         };
 
         self.set_data(&wallet);
