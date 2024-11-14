@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=@APP_VERSION@
+Name=@APP_TITLE@
+Comment=@APP_DESCRIPTION@
+Exec=@APP_EXEC@
+Icon=@APP_ICON@
+Terminal=false
+Type=Application
+Categories=Utility;GTK;GNOME;Office;Finance;
+Keywords=money;finance;wallet;cash;@APP_NAME@;
+StartupNotify=true

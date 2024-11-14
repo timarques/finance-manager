@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="@APP_RESOURCE_PATH@">
+        <file compressed="true">styles.css</file>
+    </gresource>
+    <gresource prefix="@APP_RESOURCE_PATH@/icons">
+        <file preprocess="xml-stripblanks" alias="pie-chart-svgrepo-com.svg">icons/pie-chart-svgrepo-com.svg</file>
+    </gresource>
+    <gresource prefix="@APP_RESOURCE_PATH@/icons/16x16/actions">
+        <file preprocess="xml-stripblanks" alias="month-symbolic.svg">icons/month-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="today-alt-symbolic.svg">icons/today-alt-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="work-week-symbolic.svg">icons/work-week-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="year-symbolic.svg">icons/year-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="graph-symbolic.svg">icons/graph-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="list-add-symbolic.svg">icons/list-add-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="document-open-recent-symbolic.svg">icons/document-open-recent-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="document-new-symbolic.svg">icons/document-new-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="document-open-symbolic.svg">icons/document-open-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="help-about-symbolic.svg">icons/help-about-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="media-playlist-repeat-symbolic.svg">icons/media-playlist-repeat-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="document-save-symbolic.svg">icons/document-save-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="user-trash-symbolic.svg">icons/user-trash-symbolic.svg</file>
+    </gresource>
+</gresources>
