@@ -135,7 +135,7 @@ impl TransactionPage {
         Transaction {
             name: self.name_entry_row.text().to_string(),
             description: (!description.is_empty()).then(|| description),
-            amount: self.amount_spin_row.value(),
+            amount: self.amount_spin_row.text().parse().unwrap_or(0.0),
             start_date,
             end_date,
             cycle,
