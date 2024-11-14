@@ -181,10 +181,10 @@ impl Propagator<NavigationAction> for Rc<Pages> {
 
         if is_same_action {
             current_navigation_page.deactivate();
-        } else {
-            history.push(action);
+            history.pop();
         }
-
+        
+        history.push(action);
         current_navigation_page.activate(action.clone(), context);
         self.push_navigation_page(current_navigation_page.widget());
 
