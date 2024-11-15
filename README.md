@@ -1,6 +1,8 @@
 # Finance Manager
 
-A desktop application for managing personal finances, built with Rust and GTK. 
+A desktop application for managing personal finances, built with Rust and GTK.
+
+![alt text](https://github.com/timarques/finance-manager/blob/main/screenshot.png?raw=true)
 
 ## Installation
 
