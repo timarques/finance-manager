@@ -101,6 +101,13 @@ impl TransactionRow {
             action_row.set_subtitle(&description);
         }
 
+        let now = chrono::Utc::now().date_naive();
+        if now > transaction.start_date && now < transaction.end_date.unwrap_or(now) {
+            action_row.add_prefix(&gtk::Image::from_icon_name("diamond-filled-symbolic"));
+        } else {
+            action_row.add_prefix(&gtk::Image::from_icon_name("diamond-outline-thick-symbolic"));
+        }
+
         action_row
     }
 

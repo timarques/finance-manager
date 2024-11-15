@@ -117,6 +117,16 @@ impl Wallet {
         }
     }
 
+    pub fn sort_transactions_by_amount(&mut self) {
+        self.transactions.sort_by(|a, b| {
+            match (a.amount == 0.0, b.amount == 0.0) {
+                (true, false) => std::cmp::Ordering::Greater,
+                (false, true) => std::cmp::Ordering::Less,
+                _ => b.amount.partial_cmp(&a.amount).unwrap_or(std::cmp::Ordering::Equal)
+            }
+        });
+    }
+
 }
 
 impl std::fmt::Display for Wallet {

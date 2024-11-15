@@ -124,14 +124,22 @@ impl TransactionPage {
         let end_date = self.dates_pickers_row.get_end_date();
         let start_date = self.dates_pickers_row.get_start_date();
         let description = self.description_entry_row.text().to_string();
-        let cycle = self.cycle_selector_row.get_selected_cycle();
+        let cycle = if start_date == end_date {
+            Cycle::OneTime
+        } else {
+            self.cycle_selector_row.get_selected_cycle()
+        };
+
+        let now = chrono::Utc::now().date_naive();
+
         let end_date = if cycle == Cycle::OneTime {
-            Some(chrono::Utc::now().date_naive())
-        } else if start_date > end_date {
+            Some(now)
+        } else if start_date > now && end_date == now{
             None
         } else {
             Some(end_date)
         };
+
         Transaction {
             name: self.name_entry_row.text().to_string(),
             description: (!description.is_empty()).then(|| description),

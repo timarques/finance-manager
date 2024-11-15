@@ -161,10 +161,13 @@ impl LifeCycle<NavigationAction> for Overview {
 
     fn activate(&self, action: NavigationAction, context: &Context) {
         if !matches!(action, NavigationAction::NavigateToOverview) { unreachable!() };
-        let data = context.data();
+        let mut data = context.data().clone();
+        data.sort_by_name();
+        let wallets = data.wallets_for_period();
         self.balance_row.set_balance(data.total_balance_for_period(), data.currency);
         self.header_row.set_period(data.period);
-        self.add_wallet_groups(data.wallets_for_period(), context);
+
+        self.add_wallet_groups(wallets, context);
 
         self.connect_events(context);
     }

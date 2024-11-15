@@ -111,13 +111,19 @@ impl WalletPage {
         button_row
     }
 
-    fn create_transaction_rows(&self, data: &Wallet) {
-        let mut state_mut_ref = self.state.borrow_mut();
-        for transaction in data.transactions.iter() {
-            let transaction_row = transaction_row::TransactionRow::new(transaction, data);
-            self.transactions_list_box.append(transaction_row.widget());
-            state_mut_ref.rows.push(transaction_row);
-        }
+    fn create_transaction_rows(&self, wallet: &Wallet) {
+        let mut wallet = wallet.clone();
+        wallet.sort_transactions_by_amount();
+        let rows = wallet.transactions
+            .iter()
+            .map(|t| {
+                let transaction_row = transaction_row::TransactionRow::new(t, &wallet);
+                self.transactions_list_box.append(transaction_row.widget());
+                transaction_row
+            })
+            .collect::<Vec<_>>();
+
+        self.state.borrow_mut().rows = rows;
     }
 
     fn remove_transaction_rows(&self) {

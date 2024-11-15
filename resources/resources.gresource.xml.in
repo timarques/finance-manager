@@ -20,5 +20,8 @@
         <file preprocess="xml-stripblanks" alias="media-playlist-repeat-symbolic.svg">icons/media-playlist-repeat-symbolic.svg</file>
         <file preprocess="xml-stripblanks" alias="document-save-symbolic.svg">icons/document-save-symbolic.svg</file>
         <file preprocess="xml-stripblanks" alias="user-trash-symbolic.svg">icons/user-trash-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="brush-symbolic.svg">icons/brush-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="diamond-filled-symbolic.svg">icons/diamond-filled-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="diamond-outline-thick-symbolic.svg">icons/diamond-outline-thick-symbolic.svg</file>
     </gresource>
 </gresources>

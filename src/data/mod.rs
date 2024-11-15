@@ -60,19 +60,23 @@ impl Data {
         }
     }
 
-    pub fn wallets_for_period(&self) -> Vec<Wallet> {
-        self.wallets
-            .iter()
-            .map(|w| w.for_period(self.period))
-            .collect()
-    }
-
     pub fn total_balance_for_period(&self) -> Balance {
         self.wallets_for_period()
             .iter()
             .fold(Balance::default(), |acc, wallet| {
                 acc.join(&wallet.convert_to_currency(self.currency).balance())
             })
+    }
+
+    pub fn sort_by_name(&mut self) {
+        self.wallets.sort_by(|a, b| a.name.cmp(&b.name));
+    }
+
+    pub fn wallets_for_period(&self) -> Vec<Wallet> {
+        self.wallets
+            .iter()
+            .map(|w| w.for_period(self.period))
+            .collect()
     }
 
 }

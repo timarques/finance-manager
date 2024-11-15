@@ -57,6 +57,11 @@ impl TransactionRow {
         action_row.set_activatable(true);
         action_row.add_suffix(&Self::build_suffix(transaction, balance_label));
         action_row.set_title(&transaction.name);
+        if transaction.amount == 0.0 {
+            action_row.add_prefix(&gtk::Image::from_icon_name("diamond-outline-thick-symbolic"));
+        } else {
+            action_row.add_prefix(&gtk::Image::from_icon_name("diamond-filled-symbolic"));
+        }
         if let Some(description) = &transaction.description {
             action_row.set_subtitle(&description);
         }
@@ -132,9 +137,11 @@ impl WalletGroup {
     }
 
     fn create_transaction_rows(wallet: &Wallet) -> Vec<TransactionRow> {
+        let mut wallet = wallet.clone();
+        wallet.sort_transactions_by_amount();
         wallet.transactions
             .iter()
-            .map(|t| TransactionRow::new(t, wallet))
+            .map(|t| TransactionRow::new(t, &wallet))
             .collect()
     }
 
