@@ -3,13 +3,13 @@ mod file_dialog;
 mod about_dialog;
 mod alert_dialog;
 
-use crate::metadata;
 use crate::prelude::*;
 use crate::context::*;
 
 use std::rc::Rc;
 use std::cell::Cell;
 use std::collections::HashMap;
+use crate::metadata;
 
 trait WindowComponent: LifeCycle<UiAction> {
     fn is_active(&self) -> bool;

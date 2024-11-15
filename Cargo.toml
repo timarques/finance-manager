@@ -7,6 +7,8 @@ authors = ["Tiago Marques <tyimarques@gmail.com>"]
 homepage = "https://github.com/timarques/finance-manager"
 description = "A desktop application for managing personal finances, built with Rust and GTK."
 
+build = "build/build.rs"
+
 [dependencies]
 gtk = { package = "gtk4", version = "0.9.3", features = ["v4_16"] }
 adw = { package = "libadwaita", version = "0.7.0", features = ["v1_6"] }
@@ -15,9 +17,14 @@ serde = { version = "1.0.211", default-features = false, features = ["derive"] }
 chrono = { version = "0.4.38", default-features = false, features = ["std", "clock", "serde"] }
 ureq = { version = "2.10.1", default-features = false, features = ["tls"] }
 
+[target."cfg(unix)".build-dependencies]
+libc = "0.2"
+
+[target."cfg(windows)".build-dependencies]
+winres = "0.1"
+
 [build-dependencies]
 glib-build-tools = "0.20"
-libc = "0.2"
 
 [profile.release]
 lto = true

@@ -4,7 +4,7 @@
         <file compressed="true">styles.css</file>
     </gresource>
     <gresource prefix="@APP_RESOURCE_PATH@/icons">
-        <file preprocess="xml-stripblanks" alias="pie-chart-svgrepo-com.svg">icons/pie-chart-svgrepo-com.svg</file>
+        <file preprocess="xml-stripblanks" alias="money-svgrepo-com.svg">money-svgrepo-com.svg</file>
     </gresource>
     <gresource prefix="@APP_RESOURCE_PATH@/icons/16x16/actions">
         <file preprocess="xml-stripblanks" alias="month-symbolic.svg">icons/month-symbolic.svg</file>

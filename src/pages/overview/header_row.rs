@@ -119,10 +119,6 @@ impl HeaderRow {
         self.callback.borrow_mut().replace(Rc::new(callback));
     }
 
-    pub fn disconnect_activated(&self) {
-        self.callback.borrow_mut().take();
-    }
-
 }
 
 impl HasWidget<gtk::Widget> for HeaderRow {

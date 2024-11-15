@@ -2,14 +2,13 @@ mod header_row;
 mod balance_row;
 mod wallet_group;
 
-use gtk::glib::translate::FromGlib as _;
-
 use crate::data::Wallet;
 use crate::prelude::*;
 use crate::context::*;
 use crate::utils::ScrollablePane;
 
-use std::cell::Cell;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct Overview {
     scrollable_pane: ScrollablePane,
@@ -18,11 +17,11 @@ pub struct Overview {
     insert_wallet_row: adw::ButtonRow,
     wallets_box: gtk::Box,
 
-    insert_row_signal_id: Cell<isize>
+    context: RefCell<Context>
 }
 
 impl Overview {
-    pub fn new() -> Self {
+    pub fn new() -> Rc<Self> {
         
         let wallets_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
         let header_row = header_row::HeaderRow::new();
@@ -37,14 +36,18 @@ impl Overview {
         scrollable_pane.add_separator();
         scrollable_pane.add_group(vec![balance_row.widget()]);
 
-        Self {
+        let this = Rc::new(Self {
             scrollable_pane,
             balance_row,
             header_row,
             insert_wallet_row,
             wallets_box,
-            insert_row_signal_id: Cell::new(-1)
-        }
+            context: Default::default()
+        });
+        this.connect_balance_row_activated();
+        this.connect_header_row_activated();
+        this.connect_insert_wallet_row_activated();
+        this
     }
 
     fn build_insert_button_row() -> adw::ButtonRow {
@@ -89,26 +92,28 @@ impl Overview {
         }
     }
 
-    fn connect_insert_wallet_row_activated(&self, context: &Context) {
-        let context = context.clone();
-        let signal_handler_id = self.insert_wallet_row.connect_activated(move |_| {
+    fn connect_insert_wallet_row_activated(self: &Rc<Self>) {
+        let this = Rc::downgrade(&self);
+        self.insert_wallet_row.connect_activated(move |_| {
+            let Some(this) = this.upgrade() else { unreachable!() };
+            let context = this.context.borrow().clone();
+
             context
-                .clone()
                 .with_navigation_action(NavigationAction::navigate_to_new_wallet())
                 .propagate()
         });
-
-        self.insert_row_signal_id.set(unsafe { signal_handler_id.as_raw() as isize });
     }
 
-    fn connect_header_row_activated(&self, context: &Context) {
-        let context = context.clone();
+    fn connect_header_row_activated(self: &Rc<Self>) {
+        let this = Rc::downgrade(&self);
         self.header_row.connect_activated(move |new_period| {
+            let Some(this) = this.upgrade() else { unreachable!() };
+            let context = this.context.borrow().clone();
+
             let mut new_data = context.data().clone();
             new_data.period = new_period;
 
             context
-                .clone()
                 .with_data(new_data)
                 .with_ui_action(UiAction::push_notification("Period changed"))
                 .with_navigation_action(NavigationAction::NavigateToCurrent)
@@ -116,19 +121,21 @@ impl Overview {
         });
     }
 
-    fn connect_balance_row_activated(&self, context: &Context) {
-        let context = context.clone();
+    fn connect_balance_row_activated(self: &Rc<Self>) {
+        let this = Rc::downgrade(&self);
         self.balance_row.connect_activated(move |new_currency| {
-            let old_data = context.data();
-            if old_data.currency == new_currency {
+            let Some(this) = this.upgrade() else { unreachable!() };
+            let context = this.context.borrow().clone();
+
+            let data = context.data();
+            if data.currency == new_currency {
                 return;
             }
 
-            let mut new_data = old_data.clone();
+            let mut new_data = data.clone();
             new_data.currency = new_currency;
 
             context
-                .clone()
                 .with_data(new_data)
                 .with_ui_action(UiAction::push_notification("Currency changed"))
                 .with_navigation_action(NavigationAction::NavigateToCurrent)
@@ -136,49 +143,37 @@ impl Overview {
         });
     }
 
-    fn connect_events(&self, context: &Context) {
-        self.connect_insert_wallet_row_activated(context);
-        self.connect_header_row_activated(context);
-        self.connect_balance_row_activated(context);
-    }
-
-    fn disconnect_events(&self) {
-        let insert_signal_handler_id = unsafe { gtk::glib::SignalHandlerId::from_glib(self.insert_row_signal_id.get() as u64) };
-        self.insert_wallet_row.disconnect(insert_signal_handler_id);
-        self.header_row.disconnect_activated();
-        self.balance_row.disconnect_activated();
-    }
-
 }
 
-impl HasWidget<gtk::Widget> for Overview {
+impl HasWidget<gtk::Widget> for Rc<Overview> {
     fn widget(&self) -> &gtk::Widget {
         self.scrollable_pane.widget()
     }
 }
 
-impl LifeCycle<NavigationAction> for Overview {
+impl LifeCycle<NavigationAction> for Rc<Overview> {
 
     fn activate(&self, action: NavigationAction, context: &Context) {
         if !matches!(action, NavigationAction::NavigateToOverview) { unreachable!() };
         let mut data = context.data().clone();
         data.sort_by_name();
-        let wallets = data.wallets_for_period();
+
         self.balance_row.set_balance(data.total_balance_for_period(), data.currency);
         self.header_row.set_period(data.period);
 
+        let wallets = data.wallets_for_period();
         self.add_wallet_groups(wallets, context);
 
-        self.connect_events(context);
+        self.context.replace(context.clone());
     }
 
     fn deactivate(&self) {
         self.remove_wallet_groups();
-        self.disconnect_events();
+        self.context.take();
     }
 }
 
-impl PageContent for Overview {
+impl PageContent for Rc<Overview> {
     fn title(&self) -> &str {
         "Overview"
     }

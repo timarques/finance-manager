@@ -28,7 +28,8 @@ impl App {
     }
 
     fn setup_resources() {
-        gtk::glib::set_application_name(metadata::APP_NAME);
+        gtk::glib::set_application_name(metadata::APP_TITLE);
+        gtk::glib::set_prgname(Some(metadata::APP_NAME));
         gtk::gio::resources_register_include!("compiled.gresource").expect("failed to register resources");
 
         let icon_theme = gtk::IconTheme::default();
@@ -37,6 +38,9 @@ impl App {
 
         let css_provider = gtk::CssProvider::new();
             css_provider.load_from_resource(&format!("{}/styles.css", metadata::APP_RESOURCE_PATH));
+
+        let style_manager = adw::StyleManager::default();
+            style_manager.set_color_scheme(adw::ColorScheme::PreferDark);
 
         gtk::style_context_add_provider_for_display(
             &gtk::gdk::Display::default().expect("Could not connect to a display."),
