@@ -1,0 +1,79 @@
+[Setup]
+AppName=@APP_TITLE@
+AppVersion=@APP_VERSION@
+DefaultDirName={commonpf64}\@APP_NAME@
+OutputBaseFilename=@APP_NAME@_setup
+PrivilegesRequired=admin
+UninstallDisplayIcon={app}\share\icons\@APP_NAME@\@APP_ICON@
+SetupIconFile="@APP_RESOURCES@\@APP_ICON@"
+LicenseFile="@APP_ROOT@\LICENSE"
+WizardStyle=modern
+ArchitecturesAllowed=x64compatible
+AllowNoIcons=yes
+Compression=lzma2/ultra64
+SolidCompression=yes
+DisableProgramGroupPage=yes
+DisableWelcomePage=no
+AlwaysShowComponentsList=no
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[Messages]
+SetupWindowTitle=Setup - @APP_TITLE@ @APP_VERSION@
+
+[Tasks]
+Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"
+
+[Files]
+; Main executable and resources
+Source: "@APP_GTK@\bin\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@APP_GTK@\share\icons\Adwaita\*"; DestDir: "{app}\share\icons\Adwaita"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "@APP_GTK@\share\glib-2.0\schemas\gschemas.compiled"; DestDir: "{app}\share\glib-2.0\schemas"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "@APP_GTK@\lib\gdk-pixbuf-2.0\*"; DestDir: "{app}\lib\gdk-pixbuf-2.0"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "@APP_OUTPUT@\@APP_EXECUTABLE@"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@APP_RESOURCES@\@APP_ICON@"; DestDir: "{app}\share\icons\@APP_NAME@"; Flags: ignoreversion
+
+[Icons]
+; Create a shortcut in the application's root directory pointing to the executable in the bin directory
+Name: "{app}\@APP_NAME@"; Filename: "{app}\bin\@APP_EXECUTABLE@"; IconFilename: "{app}\share\icons\@APP_NAME@\@APP_ICON@"
+; Start Menu shortcuts
+Name: "{group}\@APP_NAME@"; Filename: "{app}\bin\@APP_EXECUTABLE@"; IconFilename: "{app}\share\icons\@APP_NAME@\@APP_ICON@"
+; Desktop shortcut
+Name: "{commondesktop}\@APP_NAME@"; Filename: "{app}\bin\@APP_EXECUTABLE@"; IconFilename: "{app}\share\icons\@APP_NAME@\@APP_ICON@"
+
+[Registry]
+; Add to Add/Remove Programs
+Root: HKLM; \
+    Subkey: "Software\Microsoft\Windows\CurrentVersion\Uninstall\@APP_NAME@"; \
+    ValueType: string; ValueName: "DisplayName"; \
+    ValueData: "@APP_TITLE@"; \
+    Flags: uninsdeletevalue
+
+Root: HKLM; \
+    Subkey: "Software\Microsoft\Windows\CurrentVersion\Uninstall\@APP_NAME@"; \
+    ValueType: string; \
+    ValueName: "DisplayVersion"; \
+    ValueData: "@APP_VERSION@"; \
+    Flags: uninsdeletevalue
+
+Root: HKLM; \
+    Subkey: "Software\Microsoft\Windows\CurrentVersion\Uninstall\@APP_NAME@"; \
+    ValueType: string; \
+    ValueName: "UninstallString"; \
+    ValueData: "{uninstallexe}"; \
+    Flags: uninsdeletevalue
+
+Root: HKLM; \
+    Subkey: "Software\Microsoft\Windows\CurrentVersion\Uninstall\@APP_NAME@"; \
+    ValueType: string; \
+    ValueName: "DisplayIcon"; \
+    ValueData: "{app}\share\@APP_ICON@"; \
+    Flags: uninsdeletevalue
+
+[UninstallDelete]
+; Remove program files
+Type: filesandordirs; Name: "{app}"
+; Remove shortcuts
+Type: filesandordirs; Name: "{group}"
+Type: files; Name: "{commondesktop}\@APP_NAME@.lnk"

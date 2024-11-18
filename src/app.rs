@@ -33,11 +33,11 @@ impl App {
         gtk::gio::resources_register_include!("compiled.gresource").expect("failed to register resources");
 
         let icon_theme = gtk::IconTheme::default();
-            icon_theme.add_resource_path(&format!("{}/icons", metadata::APP_RESOURCE_PATH));
-            icon_theme.add_resource_path(&format!("{}/icons/scalable/actions", metadata::APP_RESOURCE_PATH));
+            icon_theme.add_resource_path(&format!("{}/icons", metadata::APP_G_RESOURCES_ID));
+            icon_theme.add_resource_path(&format!("{}/icons/scalable/actions", metadata::APP_G_RESOURCES_ID));
 
         let css_provider = gtk::CssProvider::new();
-            css_provider.load_from_resource(&format!("{}/styles.css", metadata::APP_RESOURCE_PATH));
+            css_provider.load_from_resource(&format!("{}/styles.css", metadata::APP_G_RESOURCES_ID));
 
         let style_manager = adw::StyleManager::default();
             style_manager.set_color_scheme(adw::ColorScheme::PreferDark);

@@ -2,7 +2,7 @@
 Version=@APP_VERSION@
 Name=@APP_TITLE@
 Comment=@APP_DESCRIPTION@
-Exec=@APP_EXEC@
+Exec=@APP_NAME@
 Icon=@APP_ICON@
 Terminal=false
 Type=Application
