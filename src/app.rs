@@ -30,7 +30,7 @@ impl App {
     fn setup_resources() {
         gtk::glib::set_application_name(metadata::APP_TITLE);
         gtk::glib::set_prgname(Some(metadata::APP_NAME));
-        gtk::gio::resources_register_include!("compiled.gresource").expect("failed to register resources");
+        gtk::gio::resources_register_include!("compiled.gresources").expect("failed to register resources");
 
         let icon_theme = gtk::IconTheme::default();
             icon_theme.add_resource_path(&format!("{}/icons", metadata::APP_G_RESOURCES_ID));

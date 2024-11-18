@@ -48,7 +48,7 @@ impl Status {
         let status_page = adw::StatusPage::new();
         // status_page.set_title(metadata::APP_TITLE);
         status_page.set_description(Some("Select a data document or create a new one"));
-        status_page.set_icon_name(Some(metadata::APP_ID));
+        status_page.set_icon_name(Some(metadata::APP_ICON));
         status_page.set_child(Some(&Self::build_status_child(buttons)));
         status_page
     }

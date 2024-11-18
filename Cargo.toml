@@ -7,6 +7,8 @@ authors = ["Tiago Marques <tyimarques@gmail.com>"]
 homepage = "https://github.com/timarques/finance-manager"
 description = "A desktop application for managing personal finances, built with Rust and GTK."
 
+build = "build.rs"
+
 [dependencies]
 gtk = { package = "gtk4", version = "0.9.3", features = ["v4_16"] }
 adw = { package = "libadwaita", version = "0.7.0", features = ["v1_6"] }

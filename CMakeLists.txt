@@ -99,6 +99,7 @@ add_custom_target(cargo_build ALL
         PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
         APP_ID=${APP_ID}
         APP_TITLE=${APP_TITLE}
+        APP_ICON=${APP_ICON}
         APP_RESOURCES=${APP_RESOURCES}
         APP_G_RESOURCES_ID=${APP_G_RESOURCES_ID}
         APP_G_RESOURCES_XML=${APP_G_RESOURCES_XML}
