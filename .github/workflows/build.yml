@@ -1,0 +1,79 @@
+name: Build Packages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+        
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup -y
+          
+      - name: Configure CMake
+        run: |
+          cmake -B build -DBUILD_INSTALLER=ON
+          
+      - name: Build
+        run: cmake --build build
+        
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: build/finance_manager_installer.exe
+          
+  flatpak-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+        
+      - name: Generate Flatpak Manifest
+        run: |
+          cmake -B build -DBUILD_FLATPAK=ON
+          
+      - name: Upload Manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-manifest
+          path: build/com.github.timarques.finance_manager.yml
+          
+  create-release:
+    needs: [windows-installer, flatpak-manifest]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: Download Windows Installer
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-installer
+          
+      - name: Download Flatpak Manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-manifest
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.sha }}
+          files: |
+            finance_manager_installer.exe
+            com.github.timarques.finance_manager.yml
