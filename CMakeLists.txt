@@ -88,7 +88,7 @@ if(WIN32 AND (BUILD_INSTALLER OR NOT GTK4_FOUND))
         file(REMOVE ${GVSBUILD_ZIP})
     endif()
 
-    set(PATH "${APP_GTK}/bin${:}${PATH}")
+    set(PATH "${APP_GTK}/bin;${PATH}")
     set(PKG_CONFIG_PATH "${APP_GTK}/lib/pkgconfig")
 
 else()
@@ -106,7 +106,7 @@ if (WIN32 OR NOT BUILD_FLATPAK)
     add_custom_target(cargo_build ALL
         COMMAND ${CMAKE_COMMAND} 
             -E env
-                PATH=$ENV{PATH}
+                PATH=${PATH}
                 CARGO_INSTALL_ROOT=${APP_OUTPUT}
                 PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
                 APP_ID=${APP_ID}

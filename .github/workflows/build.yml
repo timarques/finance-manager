@@ -32,12 +32,16 @@ jobs:
           
       - name: Build
         run: cmake --build build
+
+      - name: Find Installer
+        id: find_installer
+        run: echo "installer_path=$(find build -name '*_installer.exe' -print -quit)" >> $GITHUB_ENV
         
       - name: Upload Installer
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: build/finance_manager_installer.exe
+          path: ${{ env.installer_path }}
           
   flatpak-manifest:
     runs-on: ubuntu-latest
@@ -51,11 +55,15 @@ jobs:
         run: |
           cmake -B build -DBUILD_FLATPAK=ON
           
+      - name: Find Manifest
+        id: find_manifest
+        run: echo "manifest_path=$(find build -name '*.yml' -print -quit)" >> $GITHUB_ENV
+        
       - name: Upload Manifest
         uses: actions/upload-artifact@v4
         with:
           name: flatpak-manifest
-          path: build/com.github.timarques.finance_manager.yml
+          path: ${{ env.manifest_path }}
           
   create-release:
     needs: [windows-installer, flatpak-manifest]
@@ -68,16 +76,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: windows-installer
-          
+
       - name: Download Flatpak Manifest
         uses: actions/download-artifact@v4
         with:
           name: flatpak-manifest
-          
+
+      - name: Find Downloaded Files
+        id: find_files
+        run: |
+          installer_path=$(find . -name '*_installer.exe' -print -quit)
+          manifest_path=$(find . -name '*.yml' -print -quit)
+          echo "installer_path=$installer_path" >> $GITHUB_ENV
+          echo "manifest_path=$manifest_path" >> $GITHUB_ENV
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.sha }}
           files: |
-            finance_manager_installer.exe
-            com.github.timarques.finance_manager.yml
+            ${{ env.installer_path }}
+            ${{ env.manifest_path }}
