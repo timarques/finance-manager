@@ -11,8 +11,6 @@ find_package(PkgConfig REQUIRED)
 set(CMAKE_BUILD_TYPE Release)
 set(CARGO_MANIFEST_PATH "${CMAKE_SOURCE_DIR}/Cargo.toml")
 
-message(STATUS "INSTALL: ${CMAKE_INSTALL_BINDIR}")
-
 execute_process(
     COMMAND ${CARGO_EXECUTABLE}
         metadata

@@ -18,8 +18,9 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
         
-      - name: Install Inno Setup
+      - name: Install Dependencies
         run: |
+          choco install pkgconfiglite -y
           choco install innosetup -y
           
       - name: Configure CMake
