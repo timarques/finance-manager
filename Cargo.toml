@@ -9,7 +9,7 @@ repository = "https://github.com/timarques/finance-manager.git"
 description = "A desktop application for managing personal finances, built with Rust and GTK."
 
 [dependencies]
-gtk = { package = "gtk4", version = "0.9.3", features = ["v4_16"] }
+gtk = { package = "gtk4", version = "0.9.3", features = ["v4_12"] }
 adw = { package = "libadwaita", version = "0.7.0", features = ["v1_6"] }
 serde_json = "1.0.132"
 serde = { version = "1.0.211", default-features = false, features = ["derive"] }

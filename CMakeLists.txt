@@ -6,7 +6,7 @@ option(BUILD_INSTALLER "Build Windows installer using Inno Setup" OFF)
 
 find_program(CARGO_EXECUTABLE cargo REQUIRED)
 find_program(RUSTC_EXECUTABLE rustc REQUIRED)
-find_package(PkgConfig REQUIRED)
+find_package(PkgConfig)
 
 set(CMAKE_BUILD_TYPE Release)
 set(CARGO_MANIFEST_PATH "${CMAKE_SOURCE_DIR}/Cargo.toml")
@@ -54,11 +54,7 @@ if (UNIX AND NOT APPLE AND BUILD_FLATPAK)
     return()
 endif()
 
-pkg_check_modules(GTK4 gtk4)
-pkg_check_modules(GLIB glib-2.0)
-pkg_check_modules(GIO gio-2.0)
-
-if(WIN32 AND (BUILD_INSTALLER OR NOT GTK4_FOUND))
+if(WIN32 AND (BUILD_INSTALLER OR NOT PkgCongig_FOUND))
     set(APP_GTK ${CMAKE_BINARY_DIR}/gtk4)
     set(GVSBUILD_ZIP ${CMAKE_BINARY_DIR}/gvsbuild.zip)
     set(GVSBUILD_URL "https://github.com/wingtk/gvsbuild/releases/download/2024.11.1/GTK4_Gvsbuild_2024.11.1_x64.zip")
@@ -88,13 +84,18 @@ if(WIN32 AND (BUILD_INSTALLER OR NOT GTK4_FOUND))
         file(REMOVE ${GVSBUILD_ZIP})
     endif()
 
-    set(PATH "${APP_GTK}/bin;${PATH}")
-    set(PKG_CONFIG_PATH "${APP_GTK}/lib/pkgconfig")
+    set(APP_PATH "${APP_GTK}\\bin;")
+    set(PKG_CONFIG_PATH "${APP_GTK}\\lib\\pkgconfig;")
+elseif(PkgConfig_FOUND)
+    pkg_check_modules(GTK4 REQUIRED gtk4>=4.12)
+    pkg_check_modules(LIBADWAITA REQUIRED libadwaita>=1.6)
+    pkg_check_modules(GLIB REQUIRED glib-2.0)
+    pkg_check_modules(GIO REQUIRED gio-2.0)
 
+    set(APP_PATH $ENV{PATH})
+    set(PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
 else()
-    if (NOT GTK4_FOUND OR NOT GLIB_FOUND OR NOT GIO_FOUND)
-        message(FATAL_ERROR "GTK4, GLib and GIO libraries not found")
-    endif()
+    message(FATAL_ERROR "Could not find GTK4 or PkgConfig")
 endif()
 
 configure_file("${CMAKE_SOURCE_DIR}/resources/templates/gresources.xml.template" ${CMAKE_BINARY_DIR}/gresources.xml @ONLY)
@@ -102,25 +103,28 @@ configure_file("${CMAKE_SOURCE_DIR}/resources/icon.svg" ${CMAKE_BINARY_DIR}/reso
 file(COPY "${CMAKE_SOURCE_DIR}/resources/styles.css" DESTINATION ${CMAKE_BINARY_DIR}/resources)
 file(COPY "${CMAKE_SOURCE_DIR}/resources/icons" DESTINATION ${CMAKE_BINARY_DIR}/resources)
 
-if (WIN32 OR NOT BUILD_FLATPAK)
-    add_custom_target(cargo_build ALL
-        COMMAND ${CMAKE_COMMAND} 
-            -E env
-                PATH=${PATH}
-                CARGO_INSTALL_ROOT=${APP_OUTPUT}
-                PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-                APP_ID=${APP_ID}
-                APP_TITLE=${APP_TITLE}
-                APP_ICON_NAME=${APP_ICON_NAME}
-                APP_ICON_ICO_PATH=${APP_ICON_ICO_PATH}
-                APP_RESOURCES=${APP_RESOURCES}
-                APP_G_RESOURCES_ID=${APP_G_RESOURCES_ID}
-                APP_G_RESOURCES_XML=${APP_G_RESOURCES_XML}
-            ${CARGO_EXECUTABLE} install --path . --force
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        USES_TERMINAL
-    )
-endif()
+add_custom_target(cargo_build ALL
+    COMMAND ${CMAKE_COMMAND} 
+        -E env 
+            PATH=${APP_PATH}
+            PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+            APP_ID=${APP_ID}
+            APP_TITLE=${APP_TITLE}
+            APP_ICON_NAME=${APP_ICON_NAME}
+            APP_ICON_ICO_PATH=${APP_ICON_ICO_PATH}
+            APP_RESOURCES=${APP_RESOURCES}
+            APP_G_RESOURCES_ID=${APP_G_RESOURCES_ID}
+            APP_G_RESOURCES_XML=${APP_G_RESOURCES_XML}
+        ${CARGO_EXECUTABLE}
+            install
+            --path .
+            --force
+            --color=always
+            --target-dir=${CMAKE_BINARY_DIR}
+            --root=${APP_OUTPUT}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    USES_TERMINAL
+)
 
 if(WIN32 AND BUILD_INSTALLER)
     find_program(ISCC_PATH 
@@ -146,15 +150,16 @@ if(WIN32 AND BUILD_INSTALLER)
     configure_file(${APP_ICON_ICO_PATH} ${CMAKE_BINARY_DIR}/resources/${APP_ICON} COPYONLY)
     configure_file(${CMAKE_SOURCE_DIR}/resources/templates/installer.iss.template ${CMAKE_BINARY_DIR}/installer.iss @ONLY)
 
-    add_custom_command(
-        TARGET cargo_build
-        POST_BUILD
+    add_custom_target(build_installer ALL
         COMMAND ${CMAKE_COMMAND} -E echo "Building Windows installer..."
-        COMMAND ${ISCC_PATH} /O"${CMAKE_BINARY_DIR}" /F"${APP_NAME}_installer" ${CMAKE_BINARY_DIR}/installer.iss
-        COMMAND ${CMAKE_COMMAND} -E echo "Windows installer built: ${CMAKE_BINARY_DIR}/${APP_NAME}_installer.exe"
-        DEPENDS ${CMAKE_BINARY_DIR}/bin/${APP_EXECUTABLE}
+        COMMAND ${ISCC_PATH} /O"${CMAKE_BINARY_DIR}/bin" /F"${APP_NAME}-installer" ${CMAKE_BINARY_DIR}/installer.iss
+        COMMAND ${CMAKE_COMMAND} -E echo "Windows installer built: ${CMAKE_BINARY_DIR}/bin/${APP_NAME}-installer.exe"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         USES_TERMINAL
     )
+
+    add_dependencies(build_installer cargo_build)
+
 endif()
 
 if(UNIX AND NOT APPLE)
