@@ -1,6 +1,6 @@
 pub const APP_ID: &str = env!("APP_ID");
 pub const APP_TITLE: &str = env!("APP_TITLE");
-pub const APP_ICON: &str = env!("APP_ICON");
+pub const APP_ICON_NAME: &str = env!("APP_ICON");
 pub const APP_G_RESOURCES_ID: &str = env!("APP_G_RESOURCES_ID");
 pub const APP_NAME: &str = env!("CARGO_PKG_NAME");
 pub const APP_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");

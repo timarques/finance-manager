@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>@APP_ID@</id>
+  <project_license>@APP_LICENSE@</project_license>
+  <name>@APP_TITLE@</name>
+  <launchable type="desktop-id">@APP_ID@.desktop</launchable>
+  <summary>@APP_DESCRIPTION@</summary>
+  <description>
+    <p>
+      @APP_DESCRIPTION@
+    </p>
+  </description>
+  <url type="homepage">@APP_HOMEPAGE@</url>
+  <content_rating type="oars-1.1" />
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </recommends>
+</component>

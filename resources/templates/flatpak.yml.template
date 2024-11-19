@@ -1,0 +1,26 @@
+id: @APP_ID@
+runtime: org.gnome.Platform
+runtime-version: master
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: @APP_EXECUTABLE@
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=xdg-data
+  - --share=network
+build-options:
+  append-path: "/usr/lib/sdk/rust-stable/bin"
+  build-args:
+    - --share=network
+modules:
+  - name: @APP_NAME@
+    buildsystem: cmake-ninja
+    sources:
+      - type: git
+        url: @APP_REPOSITORY@
+        branch: main
+    

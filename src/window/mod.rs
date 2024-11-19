@@ -54,7 +54,7 @@ impl Window {
         let window = adw::ApplicationWindow::new(application);
         window.set_content(Some(child.widget()));
         window.set_default_size(800, 600);
-        window.set_icon_name(Some(metadata::APP_ICON));
+        window.set_icon_name(Some(metadata::APP_ICON_NAME));
         window.present();
         window
     }

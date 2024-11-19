@@ -26,7 +26,7 @@ impl AboutDialog {
             dialog.set_presentation_mode(adw::DialogPresentationMode::Floating);
             dialog.set_application_name(&metadata::APP_TITLE);
             dialog.set_title(&metadata::APP_DESCRIPTION);
-            dialog.set_application_icon(&metadata::APP_ICON);
+            dialog.set_application_icon(&metadata::APP_ICON_NAME);
             dialog.set_version(metadata::APP_VERSION);
             dialog.set_developers(&[metadata::APP_DEVELOPERS]);
             dialog.set_website(metadata::APP_HOMEPAGE);

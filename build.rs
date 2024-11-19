@@ -37,7 +37,7 @@ fn main() {
         std::env::var("APP_G_RESOURCES_XML"),
         std::env::var("APP_G_RESOURCES_ID"),
         std::env::var("APP_ID"),
-        std::env::var("APP_ICON"),
+        std::env::var("APP_ICON_NAME"),
         std::env::var("APP_TITLE"),
     ) {
         #[cfg(target_os = "windows")]
