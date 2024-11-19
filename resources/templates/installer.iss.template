@@ -31,7 +31,7 @@ Source: "@APP_GTK@\bin\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@APP_GTK@\share\icons\Adwaita\*"; DestDir: "{app}\share\icons\Adwaita"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "@APP_GTK@\share\glib-2.0\schemas\gschemas.compiled"; DestDir: "{app}\share\glib-2.0\schemas"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "@APP_GTK@\lib\gdk-pixbuf-2.0\*"; DestDir: "{app}\lib\gdk-pixbuf-2.0"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "@APP_OUTPUT@\bin"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@APP_OUTPUT@\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@APP_RESOURCES@\@APP_ICON@"; DestDir: "{app}\share\icons\@APP_NAME@"; Flags: ignoreversion
 
 [Icons]

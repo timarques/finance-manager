@@ -11,9 +11,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
+      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
+    
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable-x86_64-pc-windows-msvc
       
       - name: Install CMake
         uses: lukka/get-cmake@latest

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(finance_manager LANGUAGES NONE)
+project(finance_manager LANGUAGES C)
 
 OPTION(BUILD_FLATPAK "Build flatpak package" OFF)
 option(BUILD_INSTALLER "Build Windows installer using Inno Setup" OFF)
@@ -54,9 +54,9 @@ if (UNIX AND NOT APPLE AND BUILD_FLATPAK)
     return()
 endif()
 
-pkg_check_modules(GTK4 REQUIRED gtk4)
-pkg_check_modules(GLIB REQUIRED glib-2.0)
-pkg_check_modules(GIO REQUIRED gio-2.0)
+pkg_check_modules(GTK4 gtk4)
+pkg_check_modules(GLIB glib-2.0)
+pkg_check_modules(GIO gio-2.0)
 
 if(WIN32 AND (BUILD_INSTALLER OR NOT GTK4_FOUND))
     set(APP_GTK ${CMAKE_BINARY_DIR}/gtk4)
@@ -88,8 +88,13 @@ if(WIN32 AND (BUILD_INSTALLER OR NOT GTK4_FOUND))
         file(REMOVE ${GVSBUILD_ZIP})
     endif()
 
+    set(PATH "${APP_GTK}/bin${:}${PATH}")
     set(PKG_CONFIG_PATH "${APP_GTK}/lib/pkgconfig")
 
+else()
+    if (NOT GTK4_FOUND OR NOT GLIB_FOUND OR NOT GIO_FOUND)
+        message(FATAL_ERROR "GTK4, GLib and GIO libraries not found")
+    endif()
 endif()
 
 configure_file("${CMAKE_SOURCE_DIR}/resources/templates/gresources.xml.template" ${CMAKE_BINARY_DIR}/gresources.xml @ONLY)
@@ -101,6 +106,7 @@ if (WIN32 OR NOT BUILD_FLATPAK)
     add_custom_target(cargo_build ALL
         COMMAND ${CMAKE_COMMAND} 
             -E env
+                PATH=$ENV{PATH}
                 CARGO_INSTALL_ROOT=${APP_OUTPUT}
                 PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
                 APP_ID=${APP_ID}
