@@ -21,6 +21,6 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: git
-        url: @APP_REPOSITORY@
+        url: "@APP_REPOSITORY@"
         branch: main
     

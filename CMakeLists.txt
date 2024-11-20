@@ -38,7 +38,7 @@ endif()
 
 set(APP_OUTPUT ${CMAKE_BINARY_DIR})
 set(APP_ROOT ${CMAKE_SOURCE_DIR})
-set(APP_ID com.github.timarques.${APP_NAME})
+set(APP_ID com.github.timarques.FinanceManager)
 set(APP_ICON ${APP_ID}.svg)
 set(APP_ICON_NAME ${APP_ID})
 set(APP_ICON_ICO_PATH ${APP_ROOT}/resources/icon.ico)

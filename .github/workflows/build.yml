@@ -104,42 +104,6 @@ jobs:
           manifest_path=$(find build -name '*.yml' -print -quit)
           echo "Manifest found: $manifest_path"
           echo "manifest_path=$manifest_path" >> $GITHUB_ENV
-
-      - name: Set up Docker
-        run: |
-          sudo apt update
-          sudo apt install ca-certificates curl
-          sudo install -m 0755 -d /etc/apt/keyrings
-          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-          sudo chmod a+r /etc/apt/keyrings/docker.asc
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt update
-          sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-          sudo systemctl start docker
-          
-      - name: Pull latest Fedora image
-        run: docker pull fedora:41
-          
-      - name: Build and Test in Container
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/src fedora:41 bash -c '
-            dnf install -y \
-              gtk4-devel \
-              glib2-devel\
-              libadwaita-devel \
-              pkg-config \
-              cmake \
-              ninja-build \
-              rust\
-              cargo\
-              flatpak\
-              flatpak-builder &&\
-            flatpak remote-add --user flathub https://flathub.org/repo/flathub.flatpakrepo
-            flatpak install --user org.gnome.Sdk//47 org.gnome.Platform//47  org.freedesktop.Sdk.Extension.rust-stable//24.08 -y
-            flatpak-builder --user flatpak_build /src/${{ env.manifest_path }}'
           
       - name: Upload Manifest
         uses: actions/upload-artifact@v4
