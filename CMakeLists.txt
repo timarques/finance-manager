@@ -88,7 +88,7 @@ if(WIN32 AND (BUILD_INSTALLER OR NOT PkgCongig_FOUND))
     set(PKG_CONFIG_PATH "${APP_GTK}\\lib\\pkgconfig;")
 elseif(PkgConfig_FOUND)
     pkg_check_modules(GTK4 REQUIRED gtk4>=4.12)
-    pkg_check_modules(LIBADWAITA REQUIRED libadwaita>=1.6)
+    pkg_check_modules(LIBADWAITA REQUIRED libadwaita-1>=1.6)
     pkg_check_modules(GLIB REQUIRED glib-2.0)
     pkg_check_modules(GIO REQUIRED gio-2.0)
 
