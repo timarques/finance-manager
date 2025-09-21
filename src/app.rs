@@ -27,14 +27,11 @@ impl App {
         context.with_navigation_action(NavigationAction::NavigateToStatus).propagate();
     }
 
-    fn setup_resources() {
+    fn setup_resources(application: &adw::Application) {
         gtk::glib::set_application_name(metadata::APP_TITLE);
         gtk::glib::set_prgname(Some(metadata::APP_NAME));
         gtk::gio::resources_register_include!("compiled.gresources").expect("failed to register resources");
-
-        let icon_theme = gtk::IconTheme::default();
-            icon_theme.add_resource_path(&format!("{}/icons", metadata::APP_G_RESOURCES_ID));
-            icon_theme.add_resource_path(&format!("{}/icons/scalable/actions", metadata::APP_G_RESOURCES_ID));
+        application.set_resource_base_path(Some(metadata::APP_G_RESOURCES_ID));
 
         let css_provider = gtk::CssProvider::new();
             css_provider.load_from_resource(&format!("{}/styles.css", metadata::APP_G_RESOURCES_ID));
@@ -54,8 +51,8 @@ impl App {
         self.application.connect_activate(move |app| {
             Self::setup_context(&this, app);
         });
-        self.application.connect_startup(|_| {
-            Self::setup_resources();
+        self.application.connect_startup(|app| {
+            Self::setup_resources(app);
         });
         self.application.run();
     }
